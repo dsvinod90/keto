@@ -1,6 +1,10 @@
 package hlc
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/lafikl/hlc"
+)
 
 type Clock interface {
 	Now() int64
@@ -14,6 +18,19 @@ type HLC struct {
 type Timestamp struct {
 	ts    int64
 	count int64
+}
+
+// var Now Timestamp
+var GlobalTS *HLC = NewWithPT(hlc.PT{Seconds: true})
+
+func GetInstance() *HLC {
+	// globalTS = NewWithPT(hlc.PT{Seconds: true})
+	// Now = globalTS.Now()
+	if GlobalTS != nil {
+		return GlobalTS
+	}
+	// return NewWithPT(hlc.PT{Seconds: true})
+	return nil
 }
 
 // Less compares timestamps by checking the timestamps first

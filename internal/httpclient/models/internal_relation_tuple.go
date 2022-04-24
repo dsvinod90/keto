@@ -12,12 +12,16 @@ import (
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
+	"github.com/ory/keto/internal/x/hlc"
 )
 
 // InternalRelationTuple internal relation tuple
 //
 // swagger:model InternalRelationTuple
 type InternalRelationTuple struct {
+
+	// hlc timestamp
+	HlcTimestamp *Timestamp `json:"hlc_timestamp,omitempty"`
 
 	// Namespace of the Relation Tuple
 	// Required: true
@@ -38,11 +42,17 @@ type InternalRelationTuple struct {
 
 	// subject set
 	SubjectSet *SubjectSet `json:"subject_set,omitempty"`
+
+	Clock hlc.Clock `json:"clock,omitempty"`
 }
 
 // Validate validates this internal relation tuple
 func (m *InternalRelationTuple) Validate(formats strfmt.Registry) error {
 	var res []error
+
+	if err := m.validateHlcTimestamp(formats); err != nil {
+		res = append(res, err)
+	}
 
 	if err := m.validateNamespace(formats); err != nil {
 		res = append(res, err)
@@ -63,6 +73,25 @@ func (m *InternalRelationTuple) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *InternalRelationTuple) validateHlcTimestamp(formats strfmt.Registry) error {
+	if swag.IsZero(m.HlcTimestamp) { // not required
+		return nil
+	}
+
+	if m.HlcTimestamp != nil {
+		if err := m.HlcTimestamp.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("hlc_timestamp")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("hlc_timestamp")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -102,6 +131,8 @@ func (m *InternalRelationTuple) validateSubjectSet(formats strfmt.Registry) erro
 		if err := m.SubjectSet.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("subject_set")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("subject_set")
 			}
 			return err
 		}
@@ -114,6 +145,10 @@ func (m *InternalRelationTuple) validateSubjectSet(formats strfmt.Registry) erro
 func (m *InternalRelationTuple) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.contextValidateHlcTimestamp(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateSubjectSet(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -124,12 +159,30 @@ func (m *InternalRelationTuple) ContextValidate(ctx context.Context, formats str
 	return nil
 }
 
+func (m *InternalRelationTuple) contextValidateHlcTimestamp(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.HlcTimestamp != nil {
+		if err := m.HlcTimestamp.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("hlc_timestamp")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("hlc_timestamp")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *InternalRelationTuple) contextValidateSubjectSet(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.SubjectSet != nil {
 		if err := m.SubjectSet.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("subject_set")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("subject_set")
 			}
 			return err
 		}

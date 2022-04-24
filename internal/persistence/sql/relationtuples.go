@@ -16,6 +16,8 @@ import (
 	"github.com/ory/keto/internal/x/hlc"
 )
 
+// var instanceTS = hlc.InitApp()
+
 type (
 	RelationTuple struct {
 		// An ID field is required to make pop happy. The actual ID is a composite primary key.
@@ -29,7 +31,7 @@ type (
 		SubjectSetObject      sql.NullString `db:"subject_set_object"`
 		SubjectSetRelation    sql.NullString `db:"subject_set_relation"`
 		CommitTime            time.Time      `db:"commit_time"`
-		HlcTimestamp          string         `db:"hlc_timestamp"`
+		HlcTimestamp          hlc.Timestamp  `db:"hlc_timestamp"`
 	}
 	relationTuples []*RelationTuple
 )
@@ -53,9 +55,10 @@ func (r *RelationTuple) toInternal(ctx context.Context, nm namespace.Manager, p 
 	}
 
 	rt := &relationtuple.InternalRelationTuple{
-		Relation:  r.Relation,
-		Object:    r.Object,
-		Namespace: n.Name,
+		Relation:     r.Relation,
+		Object:       r.Object,
+		Namespace:    n.Name,
+		HlcTimestamp: r.HlcTimestamp,
 	}
 
 	if r.SubjectID.Valid {
@@ -137,7 +140,7 @@ func (p *Persister) InsertRelationTuple(ctx context.Context, rel *relationtuple.
 	rt := &RelationTuple{
 		ID:           uuid.Must(uuid.NewV4()),
 		CommitTime:   time.Now(),
-		HlcTimestamp: hlc.NewWithPT(hlc.PT{Seconds: true}).Now().String(),
+		HlcTimestamp: hlc.GetInstance().Now(),
 	}
 	if err := rt.FromInternal(ctx, p, rel); err != nil {
 		return err
