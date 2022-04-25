@@ -19,7 +19,6 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/ory/keto/internal/x"
-	"github.com/ory/keto/internal/x/hlc"
 )
 
 type (
@@ -64,7 +63,7 @@ type RelationQuery struct {
 	// swagger:allOf
 	SubjectSet *SubjectSet `json:"subject_set,omitempty"`
 
-	HlcTimestamp hlc.Timestamp `json:"hlc_timestamp,omitempty"`
+	HlcTimestamp string `json:"hlc_timestamp,omitempty"`
 }
 
 // swagger:ignore
@@ -95,11 +94,11 @@ type Subject interface {
 
 // swagger:ignore
 type InternalRelationTuple struct {
-	Namespace    string        `json:"namespace"`
-	Object       string        `json:"object"`
-	Relation     string        `json:"relation"`
-	Subject      Subject       `json:"subject"`
-	HlcTimestamp hlc.Timestamp `json:"hlc_timestamp"`
+	Namespace    string  `json:"namespace"`
+	Object       string  `json:"object"`
+	Relation     string  `json:"relation"`
+	Subject      Subject `json:"subject"`
+	HlcTimestamp string  `json:"hlc_timestamp"`
 }
 
 // swagger:parameters getExpand

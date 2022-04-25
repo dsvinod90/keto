@@ -551,7 +551,7 @@
           "$ref": "#/definitions/SubjectSet"
         },
         "hlc_timestamp": {
-          "$ref": "#/definitions/Timestamp"
+          "type": "string"
         }
       }
     },
@@ -572,7 +572,7 @@
       "properties": {
         "hlc_timestamp": {
           "description": "HLC Timestamp",
-          "$ref": "#/definitions/Timestamp"
+          "type": "string"
         },
         "namespace": {
           "description": "Namespace of the Relation Tuple",
@@ -592,22 +592,6 @@
         },
         "subject_set": {
           "$ref": "#/definitions/SubjectSet"
-        }
-      }
-    },
-    "Timestamp": {
-      "type": "object",
-      "required": ["TS", "count"],
-      "properties": {
-        "TS": {
-          "description": "Timestamp",
-          "type": "integer",
-          "format": "int64"
-        },
-        "count": {
-          "description": "count",
-          "type": "integer",
-          "format": "int64"
         }
       }
     },

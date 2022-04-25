@@ -32,7 +32,7 @@ type (
 		SubjectSetObject      sql.NullString `db:"subject_set_object"`
 		SubjectSetRelation    sql.NullString `db:"subject_set_relation"`
 		CommitTime            time.Time      `db:"commit_time"`
-		HlcTimestamp          hlc.Timestamp  `db:"hlc_timestamp"`
+		HlcTimestamp          string         `db:"hlc_timestamp"`
 	}
 	relationTuples []*RelationTuple
 )
@@ -56,10 +56,9 @@ func (r *RelationTuple) toInternal(ctx context.Context, nm namespace.Manager, p 
 	}
 
 	rt := &relationtuple.InternalRelationTuple{
-		Relation:     r.Relation,
-		Object:       r.Object,
-		Namespace:    n.Name,
-		HlcTimestamp: r.HlcTimestamp,
+		Relation:  r.Relation,
+		Object:    r.Object,
+		Namespace: n.Name,
 	}
 
 	if r.SubjectID.Valid {
@@ -126,7 +125,7 @@ func (r *RelationTuple) pushToRedis() {
 	})
 
 	// err := client.Set(nil, r.ID.String(), r.HlcTimestamp.String(), 0).Err()
-	client.Set(context.Background(), r.ID.String(), r.HlcTimestamp.String(), 0).Err()
+	client.Set(context.Background(), r.ID.String(), r.HlcTimestamp, 0).Err()
 
 	// if err != nil {
 	// 	panic(err)
@@ -157,7 +156,7 @@ func (p *Persister) InsertRelationTuple(ctx context.Context, rel *relationtuple.
 	rt := &RelationTuple{
 		ID:           uuid.Must(uuid.NewV4()),
 		CommitTime:   time.Now(),
-		HlcTimestamp: hlc.GetInstance().Now(),
+		HlcTimestamp: hlc.GetInstance().Now().String(),
 	}
 	rt.pushToRedis()
 	if err := rt.FromInternal(ctx, p, rel); err != nil {

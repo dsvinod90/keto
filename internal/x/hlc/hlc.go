@@ -20,16 +20,12 @@ type Timestamp struct {
 	count int64
 }
 
-// var Now Timestamp
 var GlobalTS *HLC = NewWithPT(hlc.PT{Seconds: true})
 
 func GetInstance() *HLC {
-	// globalTS = NewWithPT(hlc.PT{Seconds: true})
-	// Now = globalTS.Now()
 	if GlobalTS != nil {
 		return GlobalTS
 	}
-	// return NewWithPT(hlc.PT{Seconds: true})
 	return nil
 }
 

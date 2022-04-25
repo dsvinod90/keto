@@ -28,7 +28,7 @@
             "$ref": "#/components/schemas/SubjectSet"
           },
           "hlc_timestamp": {
-            "$ref": "#/components/schemas/Timestamp"
+            "type": "string"
           }
         },
         "required": ["namespace", "object", "relation"],
@@ -68,26 +68,10 @@
             "$ref": "#/components/schemas/SubjectSet"
           },
           "hlc_timestamp": {
-            "$ref": "#/components/schemas/Timestamp"
+            "type": "string"
           }
         },
         "type": "object"
-      },
-      "Timestamp":{
-        "type": "object",
-        "required": ["TS", "count"],
-        "properties": {
-          "TS": {
-            "description": "Timestamp",
-            "type": "integer",
-            "format": "int64"
-          },
-          "count": {
-            "description": "count",
-            "type": "integer",
-            "format": "int64"
-          }
-        }
       },
       "SubjectSet": {
         "properties": {

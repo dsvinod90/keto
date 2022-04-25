@@ -19,7 +19,7 @@ import (
 type RelationQuery struct {
 
 	// HLC Timestamp
-	HlcTimestamp *Timestamp `json:"hlc_timestamp,omitempty"`
+	HlcTimestamp string `json:"hlc_timestamp,omitempty"`
 
 	// Namespace of the Relation Tuple
 	Namespace string `json:"namespace,omitempty"`
@@ -43,10 +43,6 @@ type RelationQuery struct {
 func (m *RelationQuery) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateHlcTimestamp(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateSubjectSet(formats); err != nil {
 		res = append(res, err)
 	}
@@ -54,25 +50,6 @@ func (m *RelationQuery) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *RelationQuery) validateHlcTimestamp(formats strfmt.Registry) error {
-	if swag.IsZero(m.HlcTimestamp) { // not required
-		return nil
-	}
-
-	if m.HlcTimestamp != nil {
-		if err := m.HlcTimestamp.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("hlc_timestamp")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("hlc_timestamp")
-			}
-			return err
-		}
-	}
-
 	return nil
 }
 
@@ -99,10 +76,6 @@ func (m *RelationQuery) validateSubjectSet(formats strfmt.Registry) error {
 func (m *RelationQuery) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.contextValidateHlcTimestamp(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.contextValidateSubjectSet(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -110,22 +83,6 @@ func (m *RelationQuery) ContextValidate(ctx context.Context, formats strfmt.Regi
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *RelationQuery) contextValidateHlcTimestamp(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.HlcTimestamp != nil {
-		if err := m.HlcTimestamp.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("hlc_timestamp")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("hlc_timestamp")
-			}
-			return err
-		}
-	}
-
 	return nil
 }
 
