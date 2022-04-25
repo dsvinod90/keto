@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"time"
 
+	"github.com/go-redis/redis/v8"
 	"github.com/gobuffalo/pop/v6"
 	"github.com/gofrs/uuid"
 	"github.com/ory/x/sqlcon"
@@ -117,6 +118,22 @@ func (r *RelationTuple) insertSubject(ctx context.Context, p *Persister, s relat
 	return nil
 }
 
+func (r *RelationTuple) pushToRedis() {
+	client := redis.NewClient(&redis.Options{
+		Addr:     "redis:6379",
+		Password: "",
+		DB:       0,
+	})
+
+	// err := client.Set(nil, r.ID.String(), r.HlcTimestamp.String(), 0).Err()
+	client.Set(context.Background(), r.ID.String(), r.HlcTimestamp.String(), 0).Err()
+
+	// if err != nil {
+	// 	panic(err)
+	// }
+
+}
+
 func (r *RelationTuple) FromInternal(ctx context.Context, p *Persister, rt *relationtuple.InternalRelationTuple) error {
 	n, err := p.GetNamespaceByName(ctx, rt.Namespace)
 	if err != nil {
@@ -142,6 +159,7 @@ func (p *Persister) InsertRelationTuple(ctx context.Context, rel *relationtuple.
 		CommitTime:   time.Now(),
 		HlcTimestamp: hlc.GetInstance().Now(),
 	}
+	rt.pushToRedis()
 	if err := rt.FromInternal(ctx, p, rel); err != nil {
 		return err
 	}
