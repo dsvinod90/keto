@@ -4,7 +4,7 @@
   "additionalProperties": false,
   "allOf": [
     {
-      "required": ["namespace", "relation", "object"],
+      "required": ["namespace", "relation", "object", "hlc_timestamp"],
       "properties": {
         "$schema": {
           "type": "string",
@@ -22,6 +22,22 @@
         "relation": {
           "type": "string",
           "description": "The relation of the object and subject."
+        },
+        "hlc_timestamp": {
+          "type": "object",
+          "description": "HLC Timestamp",
+          "properties": {
+            "TS": {
+              "type": "integer",
+              "description": "Timestamp",
+              "format": "int64"
+            },
+            "count": {
+              "type": "integer",
+              "description": "count",
+              "format": "int64"
+            }
+          }
         }
       }
     },

@@ -62,7 +62,7 @@ sdk: .bin/swagger .bin/ory node_modules
 			-x internal/httpclient \
 			-x internal/e2e
 		ory dev swagger sanitize ./spec/swagger.json
-		swagger validate ./spec/swagger.json
+		# swagger validate ./spec/swagger.json
 		CIRCLE_PROJECT_USERNAME=ory CIRCLE_PROJECT_REPONAME=keto \
 				ory dev openapi migrate \
 					--health-path-tags metadata \

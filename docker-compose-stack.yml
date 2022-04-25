@@ -1,8 +1,7 @@
 version: '3.2'
 
 services:
-
-## migration containers to populate data 
+  ## migration containers to populate data
   keto-migrate1:
     image: oryd/keto:latest
     links:
@@ -58,12 +57,11 @@ services:
       - DSN=postgres://dbuser:secret@postgresd4:5432/accesscontroldb?sslmode=disable
     command: ['migrate', 'up', '-y']
     restart: on-failure
-  
-  
-## Keto Clients  
-## ports are 44$6 (on the machine) : 4466 // $ stands for node id
-## ports are 44$7 (on the machine) : 4467 // $ stands for node id
-## ports are 44$8 (on the machine) : 4468 // $ stands for node id
+
+  ## Keto Clients
+  ## ports are 44$6 (on the machine) : 4466 // $ stands for node id
+  ## ports are 44$7 (on the machine) : 4467 // $ stands for node id
+  ## ports are 44$8 (on the machine) : 4468 // $ stands for node id
 
   keto1:
     build:
@@ -161,9 +159,8 @@ services:
     depends_on:
       - keto-migrate4
 
-
-## database containers
-## ports are 543$ (on the machine) : 5432 // $ stands for node id
+  ## database containers
+  ## ports are 543$ (on the machine) : 5432 // $ stands for node id
 
   postgresd1:
     image: postgres:9.6
@@ -201,24 +198,21 @@ services:
       - POSTGRES_PASSWORD=secret
       - POSTGRES_DB=accesscontroldb
 
-
-## Redis cachce
+  ## Redis cachce
   redis:
-      image: redis:6.2-alpine
-      ports:
-        - 6379:6379
-      command: redis-server --save 60 1 --loglevel debug
-
+    image: redis:6.2-alpine
+    ports:
+      - 6379:6379
+    command: redis-server --save 60 1 --loglevel debug
 ###### Instructions on how to use
 ## after changing code
 # 1. make docker          this recompiles with the new code a creates a new local keto docker immage
 # 2. docker-compose -f docker-compose-stack.yml down            ensure the previous stack that was deploy is fully down
 # 3. docker-compose -f docker-compose-stack.yml up --remove-orphans    deploy the setup that results with the whole infrastructure up and running
 
-
 ## information
 # keto instances
 ## read ports are 44$6 (on the machine) : 4466 // $ stands for node id
 ## write ports are 44$7 (on the machine) : 4467 // $ stands for node id
-# postgres instances 
+# postgres instances
 ## ports are 543$ (on the machine) : 5432 // $ stands for node id
